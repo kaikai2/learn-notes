@@ -12,6 +12,8 @@ import { decrement, increment } from './features/counter/counterSlice'
 import moment from 'moment'
 
 type TestNotesProps = {
+    config: boolean; 
+    closeConfig: CallableFunction;
 }
 
 const TestNotes: React.FC<TestNotesProps> = (props: TestNotesProps) => {
@@ -29,7 +31,6 @@ const TestNotes: React.FC<TestNotesProps> = (props: TestNotesProps) => {
 
     const count = useAppSelector((state) => state.counter.value)
     const dispatch = useAppDispatch()
-    const [openSettings, setOpenSettings] = useState(false);
   
     const next = useCallback(() => {
         const validMidi = getValidMidi()
@@ -49,20 +50,11 @@ const TestNotes: React.FC<TestNotesProps> = (props: TestNotesProps) => {
   
     return (
         <Layout>
-            <Layout.Header>
-                Header
-                <Button type="primary" onClick={() => {
-                    setOpenSettings(true);
-                }}>Settings</Button>
-                <Drawer title="Settings" placement="right" onClose={() => {
-                    setOpenSettings(false);
-                }} open={openSettings}>
-                    <p>Show staff <Switch style={{float: "right"}} checked={showStaff} onChange={setShowStaff}/></p>
-                    <p>Show TAB   <Switch style={{float: "right"}} checked={showTab} onChange={setShowTab}/></p>
-                    <p>Show note  <Switch style={{float: "right"}} checked={showNote} onChange={setShowNote}/></p>
-                </Drawer>
-
-            </Layout.Header>
+            <Drawer title="Settings" placement="right" onClose={() => props.closeConfig()} open={props.config}>
+                <p>Show staff <Switch style={{float: "right"}} checked={showStaff} onChange={setShowStaff}/></p>
+                <p>Show TAB   <Switch style={{float: "right"}} checked={showTab} onChange={setShowTab}/></p>
+                <p>Show note  <Switch style={{float: "right"}} checked={showNote} onChange={setShowNote}/></p>
+            </Drawer>
             <Layout>
                 <Layout.Content>
                     <Row>

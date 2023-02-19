@@ -14,6 +14,8 @@ import moment from 'moment'
 import { decrement, increment } from './features/counter/counterSlice'
 import { notEqual } from 'assert';
 type TestPositionProps = {
+    config: boolean; 
+    closeConfig: CallableFunction;
 }
 
 const TestPosition: React.FC<TestPositionProps> = (props: TestPositionProps) => {
@@ -24,6 +26,7 @@ const TestPosition: React.FC<TestPositionProps> = (props: TestPositionProps) => 
     const position = '1st'
     const [showStaff, setShowStaff] = useState(true)
     const [showNote, setShowNote] = useState(true)
+    const [showAllNotes, setShowAllNotes] = useState(false)
 
     const [answeredNote, setAnsweredNote] = useState<string|undefined>(undefined)
     const [beginTime, setBeginTime] = useState<moment.Moment>()
@@ -31,8 +34,6 @@ const TestPosition: React.FC<TestPositionProps> = (props: TestPositionProps) => 
 
     const count = useAppSelector((state) => state.counter.value)
     const dispatch = useAppDispatch()
-
-    const [openSettings, setOpenSettings] = useState(false);
   
     const next = useCallback(() => {
         const validMidi = getValidMidi()
@@ -43,7 +44,7 @@ const TestPosition: React.FC<TestPositionProps> = (props: TestPositionProps) => 
         setProblem(toGuess)
         setBeginTime(moment())
       }, [])
-    
+
       useEffect(() => {
         console.log(getFingerPositions('C', '1st'))
         next()
@@ -51,19 +52,11 @@ const TestPosition: React.FC<TestPositionProps> = (props: TestPositionProps) => 
 
     return (
         <Layout>
-            <Layout.Header>
-                Header
-                <Button type="primary" onClick={() => {
-                    setOpenSettings(true);
-                }}>Settings</Button>
-                <Drawer title="Settings" placement="right" onClose={() => {
-                    setOpenSettings(false);
-                }} open={openSettings}>
-                    <p>Show staff <Switch style={{float: "right"}} checked={showStaff} onChange={setShowStaff}/></p>
-                    <p>Show note  <Switch style={{float: "right"}} checked={showNote} onChange={setShowNote}/></p>
-                </Drawer>
-
-            </Layout.Header>
+            <Drawer title="Settings" placement="right" onClose={() => props.closeConfig()} open={props.config}>
+                <p>Show staff <Switch style={{float: "right"}} checked={showStaff} onChange={setShowStaff}/></p>
+                <p>Show note  <Switch style={{float: "right"}} checked={showNote} onChange={setShowNote}/></p>
+                <p>Show all notes  <Switch style={{float: "right"}} checked={showAllNotes} onChange={setShowAllNotes}/></p>
+            </Drawer>
             <Layout>
                 <Layout.Content>
                     <Row>
@@ -100,6 +93,7 @@ const TestPosition: React.FC<TestPositionProps> = (props: TestPositionProps) => 
                                         </Col>
                                         {map(getFingerPositions(stringName, '1st'), (position, note) => 
                                             <Col span={2} key={`${note}-${position}`}>
+                                                {(showAllNotes || Note.get(note).alt === 0) && 
                                                 <Button
                                                     type={answeredNote === undefined ? "default" : "primary"}
                                                     disabled={answeredNote !== undefined && note !== problem && note !== answeredNote} 
@@ -112,6 +106,7 @@ const TestPosition: React.FC<TestPositionProps> = (props: TestPositionProps) => 
                                                     size="large">
                                                     {position}
                                                 </Button>
+                                                }
                                             </Col>
                                         )}
                                     </Row>

@@ -33,7 +33,7 @@ const positions: {[key:Position]: PositionMap} = {
     '1st': {
         // 0 (Open), 1st finger,    2nd finger, 3rd finger, 4th finger
         "A": [['A4'], ['A#4', 'B4'], ['C5', 'C#5'], ['D5'], ['D#5', 'E5']], // A string
-        "D": [['D4'], ['D#4', 'E4'], ['E#4', 'F4'], ['G4'], ['G#4', 'A4']], // D string
+        "D": [['D4'], ['D#4', 'E4'], ['F4', 'F#4'], ['G4'], ['G#4', 'A4']], // D string
         "G": [['G3'], ['G#3', 'A3'], ['A#3', 'B3'], ['C4'], ['C#4', 'D4']], // G string
         "C": [['C3'], ['C#3', 'D3'], ['D#3', 'E3'], ['F3'], ['F#3', 'G3']], // C string
     },
