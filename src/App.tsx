@@ -1,39 +1,47 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import Abc from './Abc';
-import Main from './Main';
-import {Note, NoteWithOctave} from 'tonal'
-import { random } from 'lodash';
+import TestNotes from './TestNotes';
+import TestPosition from './TestPosition';
+import { map } from 'lodash';
+import { Layout, Menu } from 'antd';
 
-const lowest = Note.midi('C3') || 60
-const highest = Note.midi('E5') || 60
 
-const valid = (midi : number) => Note.get(Note.fromMidi(midi)).alt === 0
-let validMidi: number[] = []
-for (let midi = lowest; midi <= highest; midi++) {
-  if (valid(midi)){
-    validMidi.push(midi)
+const App : React.FC = () => {
+  const availablePages: {[key: string] : React.FC<any>} = {
+    TestPosition: TestPosition, 
+    TestNotes: TestNotes
   }
-}
-
-function App() {
-
-  const [problem, setProblem] = useState<NoteWithOctave>('C')
-  const next = useCallback(() => {
-    const toGuess = Note.fromMidi(validMidi[random(validMidi.length)])
-    console.log("toGuess=", toGuess)
-    setProblem(toGuess)
-  }, [])
-  useEffect(() => {
-    next()
-  }, [])
+  const [testPage, setTestPage] = useState('TestPosition')
 
   return (
-    <div className="App">
-      <Main problem={problem} next={next}/>
-    </div>
+    <Layout className="App">
+      <Layout.Header>
+        <div style={{
+          float: 'left',
+          width:120,
+          height: 31,
+          margin: '16px 24px 16px 0'
+        }}>
+          <img src={logo} height="100%"/>
+        </div>
+        <Menu
+            theme="dark"
+            mode="horizontal"
+            defaultSelectedKeys={[testPage]}
+            onClick={(e) => setTestPage(e.key)}
+            items={map(availablePages, (_, k) => ({
+              key: k,
+              label: k,
+            }))}
+          />
+      </Layout.Header>
+      <Layout.Content>
+        {testPage === 'TestNotes' && <TestNotes/>}
+        {testPage === 'TestPosition' && <TestPosition/>}
+      </Layout.Content>
+    </Layout>
   );
 }
 
